@@ -3,8 +3,8 @@ import sys
 import random
 
 # --- Constants ---
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600 # Adjusted for better layout
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 800 # Adjusted for better layout
 
 # Colors
 WHITE = (255, 255, 255)
@@ -30,7 +30,7 @@ CARD_CORNER_RADIUS = 8
 # --- Pygame Setup ---
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("เกมป๊อกเด้ง 0.1")
+pygame.display.set_caption("เกมป๊อกเด้ง 1.0.1")
 
 # Fonts
 try:
@@ -49,8 +49,8 @@ game_state = "start_menu" # Start at the main menu
 round_over = False
 deck, players = [], []
 player_positions = [
-    (SCREEN_WIDTH / 2, SCREEN_HEIGHT - CARD_HEIGHT / 2 - 20), # Player 1 (Bottom)
-    (SCREEN_WIDTH / 2, CARD_HEIGHT / 2 + 20),           # Player 2 (Top/Dealer)
+    (SCREEN_WIDTH / 2, SCREEN_HEIGHT - CARD_HEIGHT / 2 - 100), # Player 1 (Bottom)
+    (SCREEN_WIDTH / 2, CARD_HEIGHT / 2 + 60),           # Player 2 (Top/Dealer)
     (CARD_WIDTH + 60, SCREEN_HEIGHT / 2),               # Player 3 (Left)
     (SCREEN_WIDTH - CARD_WIDTH - 60, SCREEN_HEIGHT / 2),# Player 4 (Right)
 ]
@@ -263,18 +263,29 @@ while running:
             # Info text position
             info_y = pos_y + CARD_HEIGHT / 2 + 25 if i in [0, 1] else pos_y
             if i == 0: info_y = pos_y - CARD_HEIGHT / 2 - 45 # Player at bottom
-            if i == 1: info_y = pos_y + CARD_HEIGHT / 2 + 45 # Dealer at top
-            if i == 2: info_y = pos_y - CARD_HEIGHT/2 - 25 # Left
-            if i == 3: info_y = pos_y - CARD_HEIGHT/2 - 25 # Right
+            if i == 1: info_y = pos_y + CARD_HEIGHT / 2 + 28 # Dealer at top
+            if i == 2: info_y = pos_y - CARD_HEIGHT/2 - 45 # Left
+            if i == 3: info_y = pos_y - CARD_HEIGHT/2 - 45 # Right
 
-            info_text = f"{player['name']} - เงิน: {player['chips']}"
-            info_surf = FONT_MAIN.render(info_text, True, WHITE)
-            info_rect = info_surf.get_rect(center=(pos_x, info_y))
-            screen.blit(info_surf, info_rect)
+# 1. Render the player's name
+            name_surf = FONT_MAIN.render(player['name'], True, WHITE)
+            name_rect = name_surf.get_rect(center=(pos_x, info_y - 10))
+            chips_text = f"เงิน: {player['chips']}"
+            chips_surf = FONT_SMALL.render(chips_text, True, WHITE)
+            chips_rect = chips_surf.get_rect(center=(pos_x, info_y + 20))
+            screen.blit(name_surf, name_rect)
+            screen.blit(chips_surf, chips_rect)
             
             status_text = f"คะแนน: {player['score']} {player['status']}"
             status_surf = FONT_SMALL.render(status_text, True, WHITE)
-            status_rect = status_surf.get_rect(center=(pos_x, info_y + 25))
+
+# Use an IF statement to decide the position
+            if i == 1: # For the dealer
+                status_rect = status_surf.get_rect(center=(pos_x, info_y + 48))
+            else: # For all other players
+                status_rect = status_surf.get_rect(center=(pos_x, info_y + 155)) # Adjusted for better spacing
+
+# Draw the surface at the single, correct position
             screen.blit(status_surf, status_rect)
 
             for j, card in enumerate(player['hand']):
@@ -289,6 +300,7 @@ while running:
 
         if round_over:
             draw_round_end_overlay()
+            pygame.time.delay(500)
             draw_button(screen, "รอบต่อไป", next_round_rect, mouse_pos)
         elif game_state == 'player_turn':
             draw_button(screen, "อยู่", stay_button_rect, mouse_pos)
