@@ -54,6 +54,10 @@ player_positions = [
     (SCREEN_WIDTH - CARD_WIDTH - 100, SCREEN_HEIGHT / 2),# Player 4 (Right)
 ]
 
+# โหลดภาพพื้นหลัง
+background = pygame.image.load(r"D:\CSS\Game_Test\Gemini_Generated_Image_vu3clgvu3clgvu3c.png")
+background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
 # --- Core Game Logic Functions ---
 def get_card_value(card):
     rank = card[1]
@@ -116,7 +120,7 @@ def draw_table():
     table_rect = pygame.Rect(50, 50, SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100)
     pygame.draw.ellipse(screen, GREEN_FELT, table_rect)
     pygame.draw.ellipse(screen, BLACK, table_rect, 4)
-
+    screen.blit(background, (0, 0))
 def draw_card(surface, card_tuple, x, y):
     card_rect = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
     draw_rounded_rect(surface, card_rect, WHITE, CARD_CORNER_RADIUS)
@@ -159,7 +163,8 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_clicked = True
             
-    screen.fill(DARK_GREEN_FELT)
+    
+    screen.blit(background, (0, 0))
 
     # --- Game State Manager ---
     if game_state == "start_menu":
